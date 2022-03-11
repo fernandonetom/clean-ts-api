@@ -11,8 +11,10 @@ interface SutTypes{
   sut: Encrypter
 }
 
+const salt = 12
+
 const makeSut = (): SutTypes => {
-  const sut = new BcryptAdapter(12)
+  const sut = new BcryptAdapter(salt)
 
   return {
     sut
@@ -27,7 +29,7 @@ describe('Bcrypt adapter', () => {
 
     await sut.encrypt('any_value')
 
-    expect(hashSpy).toHaveBeenCalledWith('any_value', 12)
+    expect(hashSpy).toHaveBeenCalledWith('any_value', salt)
   })
 
   test('Should return a hash on success', async () => {
