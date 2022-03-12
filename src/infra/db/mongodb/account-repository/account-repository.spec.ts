@@ -1,5 +1,5 @@
-import { AccountMongoRepository } from './account'
-import { MongoHelper } from './helpers/mongo-helper'
+import { AccountMongoRepository } from './account-repository'
+import { MongoHelper } from '../helpers/mongo-helper'
 
 interface SutTypes{
   sut: AccountMongoRepository
