@@ -5,5 +5,11 @@ module.exports = {
   clearMocks: true,
   preset: '@shelf/jest-mongodb',
   transform: tsjPreset.transform,
-  testMatch: ['**/*.spec.ts']
+  roots: ['src'],
+  watchPathIgnorePatterns: [
+    '<rootDir>/*.json/',
+    '<rootDir>/*.js/',
+    '<rootDir>/dist/',
+    '<rootDir>/node_modules/'
+  ]
 }
