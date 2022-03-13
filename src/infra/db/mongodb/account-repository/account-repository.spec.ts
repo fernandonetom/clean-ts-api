@@ -1,6 +1,6 @@
 import { AccountMongoRepository } from './account-repository'
 import { MongoHelper } from '../helpers/mongo-helper'
-import { Collection } from 'mongodb'
+import { Collection, Document } from 'mongodb'
 
 interface SutTypes{
   sut: AccountMongoRepository
@@ -70,5 +70,25 @@ describe('Account mongo repository', () => {
     const account = await sut.loadByEmail('fake@email.com')
 
     expect(account).toBeNull()
+  })
+
+  test('Should update the account accessToken on updateAccessToken success', async () => {
+    const { sut } = makeSut()
+
+    const accountData = {
+      name: 'any_name',
+      email: 'email@mail.com',
+      password: 'any_password'
+    }
+
+    const { insertedId } = await collection.insertOne(accountData)
+
+    const accountInserted = await collection.findOne({ _id: insertedId }) as Document
+    expect(accountInserted.accessToken).toBeFalsy()
+
+    await sut.updateAccessToken(insertedId.toHexString(), 'any_token')
+    const account = await collection.findOne({ _id: insertedId })
+
+    expect(account).toBeTruthy()
   })
 })
