@@ -63,4 +63,12 @@ describe('Bcrypt adapter', () => {
 
     expect(compareSpy).toHaveBeenCalledWith('any_value', 'compare_value')
   })
+
+  test('Should return a true on compare', async () => {
+    const { sut } = makeSut()
+
+    const compare = await sut.compare('any_value', 'compare_value')
+
+    expect(compare).toBe(true)
+  })
 })
