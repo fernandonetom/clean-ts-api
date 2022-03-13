@@ -1,4 +1,4 @@
-import { AccountMongoRepository } from './account-repository'
+import { AccountMongoRepository } from './account-mongo-repository'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { Collection, Document } from 'mongodb'
 
