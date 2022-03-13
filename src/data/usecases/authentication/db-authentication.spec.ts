@@ -154,4 +154,12 @@ describe('DB Authentication use case', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should call return a token on success', async () => {
+    const { sut } = makeSut()
+
+    const token = await sut.auth(makeFakeAuthentication())
+
+    expect(token).toBe('any_token')
+  })
 })
