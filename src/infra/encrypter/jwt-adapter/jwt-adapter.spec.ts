@@ -26,4 +26,14 @@ describe('JWT Adapter', () => {
 
     expect(token).toBe('token')
   })
+
+  test('Should return a token on sign success', async () => {
+    const sut = makeSut()
+
+    jest.spyOn(jwt, 'sign').mockRejectedValueOnce(new Error() as never)
+
+    const promise = sut.encrypt('any_value')
+
+    await expect(promise).rejects.toThrow()
+  })
 })
