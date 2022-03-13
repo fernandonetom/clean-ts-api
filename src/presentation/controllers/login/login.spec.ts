@@ -3,6 +3,7 @@ import { badRequest, serverError } from '../../helpers/HttpHelpers'
 import { EmailValidator } from '../signup/SignUpProtocols'
 import { LoginController } from './login'
 import { HttpRequest } from '../../protocols/http'
+import { Authentication } from '../../../domain/usecases/authentication'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorSut implements EmailValidator {
@@ -12,6 +13,16 @@ const makeEmailValidator = (): EmailValidator => {
   }
 
   return new EmailValidatorSut()
+}
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationSut implements Authentication {
+    async auth (email: string, password: string): Promise<string> {
+      return 'any_token'
+    }
+  }
+
+  return new AuthenticationSut()
 }
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -24,15 +35,18 @@ const makeFakeRequest = (): HttpRequest => ({
 interface SutTypes {
   sut: LoginController
   emailValidatorSut: EmailValidator
+  authenticationSut: Authentication
 }
 
 const makeSut = (): SutTypes => {
+  const authenticationSut = makeAuthentication()
   const emailValidatorSut = makeEmailValidator()
-  const sut = new LoginController(emailValidatorSut)
+  const sut = new LoginController(emailValidatorSut, authenticationSut)
 
   return {
     sut,
-    emailValidatorSut
+    emailValidatorSut,
+    authenticationSut
   }
 }
 
@@ -68,7 +82,7 @@ describe('LoginController', () => {
   test('Should call EmailValidator with correct value', async () => {
     const { sut, emailValidatorSut } = makeSut()
 
-    const validatorSpy = jest.spyOn(emailValidatorSut, 'isValid').mockReturnValueOnce(false)
+    const validatorSpy = jest.spyOn(emailValidatorSut, 'isValid')
 
     const httpRequest = makeFakeRequest()
 
@@ -101,5 +115,19 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     await expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should call Authentication with correct value', async () => {
+    const { sut, authenticationSut } = makeSut()
+
+    const authSpy = jest.spyOn(authenticationSut, 'auth')
+
+    const httpRequest = makeFakeRequest()
+
+    await sut.handle(httpRequest)
+
+    expect(authSpy)
+      .toHaveBeenCalledWith(httpRequest.body.email,
+        httpRequest.body.password)
   })
 })
