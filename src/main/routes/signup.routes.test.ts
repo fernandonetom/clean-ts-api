@@ -27,4 +27,15 @@ describe('SignUp Routes', () => {
       })
       .expect(200)
   })
+
+  test('Should return an error with status correct status code', async () => {
+    await request(app)
+      .post('/api/signup')
+      .send({
+        name: 'Any Name',
+        password: '123456',
+        passwordConfirmation: '123456'
+      })
+      .expect(400)
+  })
 })
