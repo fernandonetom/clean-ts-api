@@ -1,5 +1,5 @@
 import { InvalidParamError, MissingParamError } from '../../errors'
-import { badRequest, serverError, unauthorized } from '../../helpers/HttpHelpers'
+import { badRequest, ok, serverError, unauthorized } from '../../helpers/HttpHelpers'
 import { EmailValidator, HttpRequest, Authentication } from './login-protocols'
 import { LoginController } from './login'
 
@@ -155,5 +155,17 @@ describe('LoginController', () => {
     const httpResponse = await sut.handle(httpRequest)
 
     await expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 401 if invalid credentials', async () => {
+    const { sut } = makeSut()
+
+    const httpRequest = makeFakeRequest()
+
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(ok({
+      accessToken: 'any_token'
+    }))
   })
 })
