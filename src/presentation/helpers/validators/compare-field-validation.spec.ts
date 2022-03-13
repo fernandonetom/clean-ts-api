@@ -22,4 +22,15 @@ describe('Required Field Validation', () => {
 
     expect(error).toEqual(new InvalidParamError('any_field_compare'))
   })
+
+  test('Should return null if validation pass', () => {
+    const { sut } = makeSut()
+
+    const error = sut.validate({
+      any_field: 'text',
+      any_field_compare: 'text'
+    })
+
+    expect(error).toBeFalsy()
+  })
 })
