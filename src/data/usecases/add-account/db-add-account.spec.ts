@@ -4,7 +4,7 @@ import { AddAccountRepository } from '../../protocols/db/add-account-repository'
 
 const makeHasher = (): Hasher => {
   class HasherStub implements Hasher {
-    async encrypt (value: string): Promise<string> {
+    async hash (value: string): Promise<string> {
       return await Promise.resolve('hashed_password')
     }
   }
@@ -52,7 +52,7 @@ describe('DbAddAccount UseCase', () => {
   test('Should call Hasher with correct password', async () => {
     const { sut, hasherStub } = makeSut()
 
-    const hasherSpy = jest.spyOn(hasherStub, 'encrypt')
+    const hasherSpy = jest.spyOn(hasherStub, 'hash')
 
     const accountData = makeFakeAccountData()
 
@@ -63,7 +63,7 @@ describe('DbAddAccount UseCase', () => {
   test('Should throw if Hasher throws', async () => {
     const { sut, hasherStub } = makeSut()
 
-    jest.spyOn(hasherStub, 'encrypt').mockRejectedValue(new Error())
+    jest.spyOn(hasherStub, 'hash').mockRejectedValue(new Error())
 
     const accountData = makeFakeAccountData()
     const promise = sut.add(accountData)
