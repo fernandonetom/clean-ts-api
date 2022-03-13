@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { Encrypter } from '../../data/protocols/criptography/encrypter'
+import { Hasher } from '../../data/protocols/criptography/hasher'
 import { BcryptAdapter } from './bcrypt-adapter'
 
 jest.mock('bcrypt', () => ({
@@ -8,7 +8,7 @@ jest.mock('bcrypt', () => ({
   }
 }))
 interface SutTypes{
-  sut: Encrypter
+  sut: Hasher
 }
 
 const salt = 12
