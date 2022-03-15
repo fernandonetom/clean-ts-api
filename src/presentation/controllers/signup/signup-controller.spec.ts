@@ -2,6 +2,7 @@ import { MissingParamError, ServerError } from '../../errors'
 import { Validation, AccountModel, AddAccount, AddAccountModel, HttpRequest } from './signup-controller-protocols'
 import { SignUpController } from './signup-controller'
 import { ok, badRequest, serverError } from '../../helpers/http/http-helpers'
+import { Authentication, AuthenticationModel } from '../login/login-controller-protocols'
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
@@ -11,6 +12,16 @@ const makeValidation = (): Validation => {
   }
 
   return new ValidationStub()
+}
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationSut implements Authentication {
+    async auth (authenticationData: AuthenticationModel): Promise<string> {
+      return 'any_token'
+    }
+  }
+
+  return new AuthenticationSut()
 }
 
 const makeAddAccount = (): AddAccount => {
@@ -44,17 +55,23 @@ interface SutTypes{
   sut: SignUpController
   addAccountStub: AddAccount
   validationStub: Validation
+  authenticationSut: Authentication
 }
 
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeValidation()
-  const sut = new SignUpController(addAccountStub, validationStub)
+  const authenticationSut = makeAuthentication()
+  const sut = new SignUpController(
+    addAccountStub,
+    validationStub,
+    authenticationSut)
 
   return {
     sut,
     addAccountStub,
-    validationStub
+    validationStub,
+    authenticationSut
   }
 }
 
@@ -121,5 +138,20 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse)
       .toEqual(badRequest(new MissingParamError('any')))
+  })
+  test('Should call Authentication with correct value', async () => {
+    const { sut, authenticationSut } = makeSut()
+
+    const authSpy = jest.spyOn(authenticationSut, 'auth')
+
+    const httpRequest = makeFakeRequest()
+
+    await sut.handle(httpRequest)
+
+    expect(authSpy)
+      .toHaveBeenCalledWith({
+        email: httpRequest.body.email,
+        password: httpRequest.body.password
+      })
   })
 })
