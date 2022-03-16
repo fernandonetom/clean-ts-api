@@ -58,6 +58,16 @@ describe('JWT Adapter', () => {
       expect(value).toEqual('value')
     })
 
+    test('Should return null if verify return null', async () => {
+      const sut = makeSut()
+
+      jest.spyOn(jwt, 'verify').mockResolvedValueOnce(null as never)
+
+      const value = await sut.decrypt('any_token')
+
+      expect(value).toBeNull()
+    })
+
     test('Should throw if verify throws', async () => {
       const sut = makeSut()
 
