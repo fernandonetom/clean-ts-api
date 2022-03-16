@@ -13,15 +13,17 @@ const makeDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
+const makeFakeAccount = (): AccountModel => ({
+  id: 'valid_id',
+  name: 'valid_name',
+  email: 'valid@email.com',
+  password: 'valid-password'
+})
+
 const makeAccountByTokenRepository = (): LoadAccountByTokenRepository => {
   class LoadAccountByTokenRepositoryStub implements LoadAccountByTokenRepository {
     async loadByToken (token: string, role?: string): Promise<AccountModel> {
-      return await Promise.resolve({
-        id: 'valid_id',
-        name: 'valid_name',
-        email: 'valid@email.com',
-        password: 'valid-password'
-      })
+      return await Promise.resolve(makeFakeAccount())
     }
   }
 
@@ -78,5 +80,12 @@ describe('DbLoadAccountByToken UseCase', () => {
     const account = await sut.load('any_token', 'any_role')
 
     expect(account).toBeNull()
+  })
+  test('Should call an account on success', async () => {
+    const { sut } = makeSut()
+
+    const account = await sut.load('any_token', 'any_role')
+
+    expect(account).toEqual(makeFakeAccount())
   })
 })
