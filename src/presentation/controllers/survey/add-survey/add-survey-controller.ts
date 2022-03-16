@@ -1,4 +1,4 @@
-import { ok, Controller, HttpRequest, HttpResponse, Validation, badRequest, AddSurvey, serverError } from './add-survey-controller-protocols'
+import { Controller, HttpRequest, HttpResponse, Validation, badRequest, AddSurvey, serverError, noContent } from './add-survey-controller-protocols'
 
 export class AddSurveyController implements Controller {
   constructor (private readonly validation: Validation,
@@ -12,7 +12,7 @@ export class AddSurveyController implements Controller {
 
       await this.addSurvey.add(httpRequest.body)
 
-      return ok(null)
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
