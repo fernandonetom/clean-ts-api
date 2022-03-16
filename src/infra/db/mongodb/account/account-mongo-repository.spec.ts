@@ -140,5 +140,13 @@ describe('Account mongo repository', () => {
       expect(account.email).toBe(accountData.email)
       expect(account.password).toBe(accountData.password)
     })
+
+    test('Should return null of account not exists', async () => {
+      const { sut } = makeSut()
+
+      const account = await sut.loadByToken('fake_token')
+
+      expect(account).toBeNull()
+    })
   })
 })
