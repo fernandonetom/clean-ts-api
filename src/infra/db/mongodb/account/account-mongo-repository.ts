@@ -26,7 +26,7 @@ export class AccountMongoRepository implements AddAccountRepository, LoadAccount
   async updateAccessToken (id: string, token: string): Promise<void> {
     const accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.updateOne({
-      _id: id
+      _id: MongoHelper.ObjectId(id)
     }, {
       $set: {
         accessToken: token
@@ -36,7 +36,14 @@ export class AccountMongoRepository implements AddAccountRepository, LoadAccount
 
   async loadByToken (token: string, role?: string): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts')
-    const result = await accountCollection.findOne({ accessToken: token, role })
+
+    const query = {
+      accessToken: token,
+      ...(role && { role })
+    }
+
+    const result = await accountCollection
+      .findOne(query)
 
     return result && MongoHelper.map(result)
   }

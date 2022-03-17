@@ -77,7 +77,7 @@ describe('DbLoadAccountByToken UseCase', () => {
       'loadByToken')
     await sut.load('any_token', 'any_role')
 
-    expect(loadByToken).toHaveBeenCalledWith('any_value', 'any_role')
+    expect(loadByToken).toHaveBeenCalledWith('any_token', 'any_role')
   })
   test('Should call null if LoadAccountByTokenRepository returns null', async () => {
     const { sut, loadAccountByTokenRepositoryStub } = makeSut()
