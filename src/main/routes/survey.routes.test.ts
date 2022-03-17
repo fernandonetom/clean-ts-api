@@ -20,7 +20,7 @@ describe('Survey Routes', () => {
   })
 
   describe('POST /surveys', () => {
-    test('Should return 204 on success', async () => {
+    test('Should return 403 if not send a token', async () => {
       await request(app)
         .post('/api/surveys')
         .send({
@@ -34,7 +34,7 @@ describe('Survey Routes', () => {
               answer: 'any_answer_without_image'
             }]
         })
-        .expect(204)
+        .expect(403)
     })
 
     // test('Should return an error with status correct status code', async () => {
